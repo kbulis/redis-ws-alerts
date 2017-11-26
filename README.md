@@ -1,6 +1,14 @@
 # redis-ws-alerts [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 Alerting clients over express-bound websockets of events posted to redis lists.
 
+## Installation
+
+Add redis-ws-alerts to your project (we assume you have pre-installed [node.js](https://nodejs.org/)).
+
+```bash
+yarn add redis-ws-alerts
+```
+
 ## License
 
 ISC © [Kirk Bulis](http://github.com/kbulis)

@@ -1,19 +1,18 @@
 {
   "name": "redis-ws-alerts",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Alerting clients over express-bound websockets of events posted to redis lists.",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "scripts": {
-    "prepublish": "npm run build",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "express",
     "redis",
     "ws"
   ],
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc"
+  },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "author": "Kirk Bulis <kirk.d.bulis@gmail.com> (https://github.com/kbulis)",
   "repository": {
     "type": "git",
