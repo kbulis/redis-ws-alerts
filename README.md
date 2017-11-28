@@ -15,7 +15,7 @@ There's a few things to state up front: This module takes pushed messages from r
 
 We expect to mount to an express app instance. The following example outlines a simple server:
 
-```javascript
+```typescript
 import * as express from 'express';
 import * as alerter from 'redis-ws-alerts';
 
