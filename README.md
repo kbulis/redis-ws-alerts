@@ -91,7 +91,7 @@ client.rpush('watch', customerKey);
 ### Receiving
 
 ```javascript
-const socket = new WebSocket(url);
+const socket = new WebSocket('ws://localhost:3001/myapp');
 
 socket.onmessage = (message) => {
   const data = JSON.parse(message.data || '{}');

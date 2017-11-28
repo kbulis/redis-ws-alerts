@@ -1,6 +1,6 @@
 {
   "name": "redis-ws-alerts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Alerting clients over express-bound websockets of events posted to redis lists.",
   "keywords": [
     "express",
