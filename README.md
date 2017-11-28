@@ -49,7 +49,37 @@ process.on("exit", function () {
 ### Publishing
 
 ```typescript
+import * as storage from 'redis';
+
+const client = storage.createClient('redis://localhost:6379', {
+  retry_strategy: (options: storage.RetryStrategyOptions) => {
+    return 10000;
+  }
+});
+
 ...
+
+const key = 'alert/' + customerPoolCode + '-' + customerUniqueCode;
+
+client.rpush(key, JSON.stringify({
+  event: 'alert',
+  recordedOn: new Date(),
+  message: 'An alert for some customer',
+  propX: 'Another property of the message',
+  propY: 123,
+}));
+
+client.rpush('watch', key);
+
+client.rpush(key, JSON.stringify({
+  event: 'alert',
+  recordedOn: new Date(),
+  message: 'Another alert for some customer',
+  propS: 456,
+  propT: 'Yet another property of the message',
+}));
+
+client.rpush('watch', key);
 ```
 
 ### Receiving
