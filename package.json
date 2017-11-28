@@ -1,6 +1,6 @@
 {
   "name": "redis-ws-alerts",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "Alerting clients over express-bound websockets of events posted to redis lists.",
   "keywords": [
     "express",
@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "prepare": "yarn build",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "mocha --recursive test/**/*.spec.ts"
   },
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
   "author": "Kirk Bulis <kirk.d.bulis@gmail.com> (https://github.com/kbulis)",
   "repository": {
     "type": "git",
@@ -20,14 +21,20 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^4.0.5",
     "@types/express": "^4.0.39",
+    "@types/mocha": "^2.2.44",
     "@types/redis": "^2.8.1",
     "@types/ws": "^3.2.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "ts-node": "^3.3.0",
     "typescript": "^2.6.1"
   },
   "dependencies": {
     "express": "^4.16.2",
     "redis": "^2.8.0",
+    "redis-queue-mock": "^1.0.4",
     "ws": "^3.3.2"
   }
 }

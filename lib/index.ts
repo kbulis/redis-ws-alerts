@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as storage from 'redis';
+import * as mocking from 'redis-queue-mock';
 import * as sockets from 'ws';
 
 /**
@@ -10,9 +11,23 @@ import * as sockets from 'ws';
  * 
  * Example usage:
  * 
+ * const server = new ConnectionServer(app, port);
+ * 
+ * server.onReady = (key: string, isInitial: boolean) => {
+ *   // handle new client as key, noting initial readiness
+ * };
+ * 
+ * server.onClose = (key: string, remaining: boolean) => {
+ *   // handle dropped client as key, noting status
+ * };
+ * 
+ * server.onError = (err: Error) => {
+ *   // record error in logs...
+ * };
+ * 
  * ...
- * ...
- * ...
+ * 
+ * server.close();
  * 
  */
 export class ConnectionServer {
@@ -177,21 +192,31 @@ export class ConnectionServer {
  * 
  * Example usage:
  * 
+ * const listen = new ConnectedContent('redis://localhost:6379', 'watch');
+ * 
+ * listen.onFetch = (key: string, message: string) => {
+ *   // consider key as source and message as payload...
+ * };
+ * 
+ * listen.onError = (err: Error) => {
+ *   // record error in logs...
+ * };
+ * 
  * ...
- * ...
- * ...
+ * 
+ * listen.close();
  * 
  */
 export class ConnectedContent {
 
-  private client: storage.RedisClient;
+  private client: any;
   private listen: string;
 
   private consumeFromQueue = (): void => {
-    this.client.blpop(this.listen, 0, (bad, key: any) => {
+    this.client.blpop(this.listen, 0, (bad: any, key: any) => {
       if (!bad && key) {
         if (key.length === 2) {
-          this.client.lpop(key[1], (err, message: any) => {
+          this.client.lpop(key[1], (err: any, message: any) => {
             if (!err && message) {
               const next = JSON.parse(message);
               if (next.event === 'alert') {
@@ -229,13 +254,25 @@ export class ConnectedContent {
   };
 
   constructor(connect: string, listen: string) {
-    this.listen = listen;
-    this.client = storage.createClient(connect, {
-      retry_strategy: (options: storage.RetryStrategyOptions) => {
-        return 5000;
-      }
-    });
+    // A bit of a hack here to support simple unit testing... We don't initialize
+    // until we know the connection string protocol; 'mocks' is reserved for our
+    // unit testing purposes. We assume that neither module initializes anything
+    // on import alone. Note that multiple mocked clients all use the same mock
+    // instance of redis.
 
+    if (connect.toLowerCase().startsWith('mocks://') === false) {
+      this.client = storage.createClient(connect, {
+        retry_strategy: (options: storage.RetryStrategyOptions) => {
+          return 5000;
+        }
+      });
+    }
+    else {
+      this.client = mocking.createClient(connect);
+    }
+
+    this.listen = listen;
+    
     this.client.on('error', (err: any) => {
       if (this.onError) {
         try {
