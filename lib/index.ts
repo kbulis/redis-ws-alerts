@@ -46,9 +46,9 @@ export class ConnectionServer {
         const identify = JSON.parse(message || '{}');
   
         if (identify.event === 'identify') {
-          if (identify.pcode && identify.ucode) {
+          if (identify.queue) {
             if (connected.key !== '') {
-              if (connected.key !== 'alert/' + identify.pcode + '-' + identify.ucode) {
+              if (connected.key !== identify.queue) {
                 if (this.onClose) {
                   try {
                     this.onClose(connected.key, this.lookup.some((tracked) => {
@@ -64,7 +64,7 @@ export class ConnectionServer {
               }
             }
 
-            connected.key = 'alert/' + identify.pcode + '-' + identify.ucode;
+            connected.key = identify.queue;
 
             connected.send(JSON.stringify({
               message: 'you are now connected',

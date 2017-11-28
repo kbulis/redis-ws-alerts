@@ -59,33 +59,54 @@ const client = storage.createClient('redis://localhost:6379', {
 
 ...
 
-const key = 'alert/' + customerPoolCode + '-' + customerUniqueCode;
+const customerKey = 'alert/' + customerPoolCode + '-' + customerUniqueCode;
 
-client.rpush(key, JSON.stringify({
-  event: 'alert',
-  recordedOn: new Date(),
+const messageA = {
   message: 'An alert for some customer',
   propX: 'Another property of the message',
   propY: 123,
-}));
-
-client.rpush('watch', key);
-
-client.rpush(key, JSON.stringify({
-  event: 'alert',
   recordedOn: new Date(),
+};
+
+const messageB = {
   message: 'Another alert for some customer',
-  propS: 456,
-  propT: 'Yet another property of the message',
+  propZ: 456,
+  recordedOn: new Date(),
+};
+
+client.rpush(customerKey, JSON.stringify({
+  event: 'alert',
+  ...messageA
 }));
 
-client.rpush('watch', key);
+client.rpush(customerKey, JSON.stringify({
+  event: 'alert',
+  ...messageB
+}));
+
+client.rpush('watch', customerKey);
+client.rpush('watch', customerKey);
 ```
 
 ### Receiving
 
-```typescript
-...
+```javascript
+const socket = new WebSocket(url);
+
+socket.onmessage = (message) => {
+  const data = JSON.parse(message.data || '{}');
+
+  if (data.message) {
+    console.log('received: ' + data.message);
+  }
+};
+
+socket.onopen = () => {
+  socket.send(JSON.stringify({
+    event: 'identify',
+    queue: 'alert/' + customerPoolCode + '-' + customerUniqueCode,
+  }));
+};
 ```
 
 ## License
