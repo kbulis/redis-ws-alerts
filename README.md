@@ -13,7 +13,9 @@ yarn add redis-ws-alerts
 
 There's a few things to state up front: This module takes pushed messages from redis lists and forwards them to clients connected over web sockets. Yes, there are some conventions in play, but nothing too burdensome. Of note, publishers of pushed messages must first append to the named list, then push the name of the list onto the tail of the well-known queue specified as the second argument when constructing a connected-content. As well, connected clients must send an 'identify' message to the connection-server with the persistent name of the client. This name serves as the key for the list in redis that holds the messages being forwarded. Queued messages stay queued in the named list until the client with the matching identity connects. Finally, you control the publishing and you control the receiving; utilize a consistent naming scheme and things should work nicely.
 
-We expect to mount to an express app instance. The following example outlines a simple server:
+With three contexts in play (publishing, popping and dispatching, then receiving), we can set up connected web client alerting with the following:
+
+### Popping and Dispatching
 
 ```typescript
 import * as express from 'express';
@@ -42,6 +44,18 @@ process.on("exit", function () {
   server.close();
   listen.close();
 });
+```
+
+### Publishing
+
+```typescript
+...
+```
+
+### Receiving
+
+```typescript
+...
 ```
 
 ## License
